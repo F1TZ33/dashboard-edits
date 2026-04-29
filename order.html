@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width,initial-scale=1" name="viewport"/>
-<title>Order Capture</title>
-<link href="assets/css/style.css" rel="stylesheet"/>
-<style>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Order Capture</title>
+  <link href="assets/css/style.css" rel="stylesheet"/>
+
+  <style>
     body{
       padding-top:max(0px, env(safe-area-inset-top));
       padding-bottom:max(28px, calc(env(safe-area-inset-bottom) + 18px));
@@ -148,44 +148,57 @@
     }
   </style>
 </head>
+
 <body>
-<div class="container"><div class="siteHeader"><img alt="Bearing Wholesalers" class="siteLogo" src="assets/img/logo.png"/></div><div class="topbar bwUnifiedTopbar"><div class="leftBtns"><a class="btn" href="index.html">⌂ Dashboard</a></div></div>
+  <div class="container">
+    <div class="siteHeader"><img class="siteLogo" src="assets/img/logo.png"/></div>
 
+    <div class="topbar">
+      <div class="leftBtns">
+        <a class="btn" href="index.html">⤒ Dashboard</a>
+        <a class="btn" href="resources.html">← Back</a>
+      </div>
+    </div>
 
-<section class="heroPanel">
-<div class="heroIcon">🧾</div>
-<h1>Order Capture</h1>
-<p class="subtitle">Scan parts, enter quantities, and generate structured orders directly from the rack.</p>
-</section>
-<section class="orderCard">
-<div class="orderTopGrid">
-<div class="field"><label>Company</label><input id="companyName"/></div>
-<div class="field"><label>Customer</label><input id="customerName"/></div>
-<div class="field"><label>Email</label><input id="customerEmail"/></div>
-<div class="field"><label>Date</label><input id="orderDate" type="date"/></div>
-<div class="field"><label>Reference</label><input id="orderReference"/></div>
-</div>
-<h3>Items</h3>
-<div class="orderRows" id="orderRows"></div>
-<div class="orderBottom">
-<button class="smallbtn" id="addRowBtn">Add another line</button>
-<button class="btn" id="completeBtn">Complete</button>
-</div>
-</section>
-</div>
-<div aria-hidden="true" class="scannerOverlay" id="scannerOverlay">
-<div class="scannerPanel">
-<div class="scannerTop">
-<h3>Scan Rack QR</h3>
-<button class="orderMiniBtn scannerClose" id="scannerClose" type="button">Close</button>
-</div>
-<div class="scannerFrame">
-<video id="qrVideo" muted="" playsinline=""></video>
-<canvas id="qrCanvas"></canvas>
-</div>
-<p class="scanHint">Mobile camera only. QR should contain part number, full bin location, and max quantity.</p>
-</div>
-</div>
+    <section class="heroPanel">
+      <div class="heroIcon">🧾</div>
+      <h1>Order Capture</h1>
+      <p class="subtitle">Scan parts, enter quantities, and generate structured orders directly from the rack.</p>
+    </section>
+
+    <section class="orderCard">
+      <div class="orderTopGrid">
+        <div class="field"><label>Company</label><input id="companyName"></div>
+        <div class="field"><label>Customer</label><input id="customerName"></div>
+        <div class="field"><label>Email</label><input id="customerEmail"></div>
+        <div class="field"><label>Date</label><input id="orderDate" type="date"></div>
+        <div class="field"><label>Reference</label><input id="orderReference"></div>
+      </div>
+
+      <h3>Items</h3>
+      <div class="orderRows" id="orderRows"></div>
+
+      <div class="orderBottom">
+        <button id="addRowBtn" class="smallbtn">Add another line</button>
+        <button id="completeBtn" class="btn">Complete</button>
+      </div>
+    </section>
+  </div>
+
+  <div id="scannerOverlay" class="scannerOverlay" aria-hidden="true">
+    <div class="scannerPanel">
+      <div class="scannerTop">
+        <h3>Scan Rack QR</h3>
+        <button id="scannerClose" class="orderMiniBtn scannerClose" type="button">Close</button>
+      </div>
+      <div class="scannerFrame">
+        <video id="qrVideo" playsinline muted></video>
+        <canvas id="qrCanvas"></canvas>
+      </div>
+      <p class="scanHint">Mobile camera only. QR should contain part number, full bin location, and max quantity.</p>
+    </div>
+  </div>
+
 <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
 <script>
 (() => {
@@ -243,14 +256,24 @@
 
   function applyScanToRow(payload){
     if(!activeRow || !payload) return;
-    const partInput = activeRow.querySelector('.partInput');
-    const qtyInput = activeRow.querySelector('.qtyInput');
+
+    // Lock the scan to the row that opened the scanner.
+    // This prevents the scanned values being copied into the next blank row.
+    const scannedRow = activeRow;
+    activeRow = null;
+
+    const partInput = scannedRow.querySelector('.partInput');
+    const qtyInput = scannedRow.querySelector('.qtyInput');
     const partText = [payload.part, payload.bin].filter(Boolean).join(' — ');
+
     partInput.value = partText || payload.bin || payload.part || '';
     qtyInput.value = payload.max || '';
 
-    if(partInput.value && qtyInput.value && activeRow === root.lastElementChild){
-      row();
+    if(partInput.value && qtyInput.value && scannedRow === root.lastElementChild){
+      const nextRow = row();
+      nextRow.querySelector('.partInput').value = '';
+      nextRow.querySelector('.qtyInput').value = '';
+      nextRow.querySelector('.partInput').focus();
     }
   }
 
@@ -348,6 +371,8 @@
     };
 
     el.querySelector('.orderScanBtn').onclick = () => startScanner(el);
+
+    return el;
   }
 
   function collectItems(){
