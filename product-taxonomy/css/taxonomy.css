@@ -153,3 +153,9 @@
   background: rgba(255,255,255,0.03);
   color: rgba(255,255,255,0.92);
 }
+
+/* === BW taxonomy width/header alignment === */
+.tax-header__inner,.tax-main{width:min(100% - 32px, 1180px);max-width:1180px;margin-inline:auto;}
+.tax-header{padding-inline:0;}
+.tax-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end;}
+@media (max-width:720px){.tax-header__inner,.tax-main{width:min(100% - 22px, 1180px);} .tax-header__inner{gap:12px}.tax-actions{justify-content:center;width:100%;}}

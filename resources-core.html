@@ -4,109 +4,191 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
-<title>Core</title>
+<title>Rack Map Builder</title>
+<!-- BW Global Styles -->
 <link href="assets/css/style.css" rel="stylesheet"/>
+<style>
+    .panel{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.10);border-radius:16px;padding:16px;margin-bottom:16px}
+    .grid{display:grid;gap:10px}
+    .grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+    .uploadBtn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;border-radius:10px;border:1px solid rgba(255,255,255,.15);background:#1a2433;color:#fff;font-weight:700;cursor:pointer;padding:0 16px}
+    .uploadBtn input{display:none}
+    .map{overflow:auto;margin-top:12px}
+    .shelfRow{display:grid;gap:8px;margin-bottom:8px;min-width:max-content}
+    .cell{border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.03);border-radius:10px;padding:8px;font-size:12px}
+    .shelfLabel{text-transform:uppercase;font-weight:700;text-align:center}
+    .binCode{text-transform:uppercase;font-weight:700}
+    table{width:100%;border-collapse:collapse}
+    th,td{border-bottom:1px solid rgba(255,255,255,.10);padding:8px}
+    th{background:#121d2b;position:sticky;top:0}
+    .status{margin-top:10px;font-size:13px;color:#b8c2d0}
+  </style>
 </head>
-<body data-page="admin">
-<div class="container">
-<div class="siteHeader"><img alt="Bearing Wholesalers" class="siteLogo" src="assets/img/logo.png"/></div>
-<div class="topbar">
-<div class="leftBtns">
-<a class="btn" href="resources.html">← Back</a>
-<a class="btn" href="index.html">⌂ Dashboard</a>
-</div>
-<div class="rightBtns">
-<button class="btn" data-action="suggest" type="button">Suggest edit</button>
-<button class="btn" data-action="devnote" data-editor-only="1" style="display:none" type="button">Dev notes</button>
-<button class="btn" data-action="admin" title="Admin" type="button">Admin</button>
-</div>
-</div>
-<div class="card" id="pwTools" style="margin-top:16px">
-<div style="font-weight:900;margin-bottom:8px">Change admin password</div>
-<div class="row">
-<div class="field"><label>Current password</label><input id="ad_pw_current" type="password"/></div>
-<div class="field"><label>New password</label><input id="ad_pw_new" type="password"/></div>
-</div>
-<div class="row">
-<div class="field"><label>Confirm new password</label><input id="ad_pw_confirm" type="password"/></div>
-<div class="field" style="display:flex;align-items:flex-end">
-<button class="btn" id="ad_pw_save" type="button">Update password</button>
-</div>
-</div>
-</div>
-<div class="meta">Version: <strong>GitHub vFinal</strong> • Last updated: <strong>2026-02-08</strong></div><h1>Core</h1><p>Content coming soon.</p></div>
-<div class="modalBack" id="suggestModal">
-<div class="modal">
-<h3>Suggest edit</h3>
-<p class="subtitle" style="margin:0 0 10px">This creates an email draft to the manual admin. You’ll still click Send in your email app.</p>
-<div class="row">
+<body>
+<div class="container"><div class="siteHeader"><img alt="Bearing Wholesalers" class="siteLogo" src="assets/img/logo.png"/></div><div class="topbar bwUnifiedTopbar"><div class="leftBtns"><a class="btn" href="resources.html">← Back</a><a class="btn" href="index.html">⌂ Dashboard</a></div></div>
+<!-- HEADER -->
+
+
+<section class="heroPanel">
+<div class="heroIcon">🗂️</div>
+<h1>Rack Map Builder</h1>
+<p class="subtitle">Build racks, export CSV for customers, then upload completed data to review and process.</p>
+</section>
+<!-- INPUT PANEL -->
+<div class="grid grid-2">
 <div class="field">
-<label>Your name (required)</label>
-<input id="se_name" placeholder="e.g., Jordan"/>
+<label>Customer Code</label>
+<input id="customerName" type="text"/>
 </div>
 <div class="field">
-<label>Urgency (optional)</label>
-<select id="se_urgency">
-<option value="">—</option>
-<option>Low</option><option>Medium</option><option>High</option>
-</select>
-</div>
+<label>Rack Location</label>
+<input id="rackName" type="text"/>
 </div>
 <div class="field">
-<label>Suggestion (required)</label>
-<textarea id="se_suggestion" placeholder="What should change? Be specific if possible."></textarea>
-</div>
-<div class="field" data-editor-field="1" style="display:none">
-<label>Section / location (optional)</label>
-<input id="se_section" placeholder="Where on the page does this apply?"/>
-</div>
-<div class="field" data-editor-field="1" style="display:none">
-<label>Proposed replacement wording (optional)</label>
-<textarea id="se_replacement" placeholder="Paste the new wording here (optional)."></textarea>
-</div>
-<div class="field" data-editor-field="1" style="display:none">
-<label>Reason / context (optional)</label>
-<textarea id="se_reason" placeholder="Why should this change? Any customer context?"></textarea>
-</div>
-<input id="se_page" type="hidden"/>
-<input id="se_path" type="hidden"/>
-<input id="se_time" type="hidden"/>
-<div class="actions">
-<button class="btn" id="se_send" type="button">Confirm &amp; create email</button>
-<button class="smallbtn" data-close="suggestModal" type="button">Cancel</button>
-</div>
-</div>
-</div>
-<div class="modalBack" id="devNoteModal">
-<div class="modal">
-<h3>Developer notes (private)</h3>
-<p class="subtitle" style="margin:0 0 10px">Saved locally on this computer/browser. Not visible to normal users.</p>
-<div class="field">
-<label>Page</label>
-<input id="dn_path" readonly=""/>
+<label>Rack Number</label>
+<input id="rack" type="number" value="0"/>
 </div>
 <div class="field">
-<label>Notes</label>
-<textarea id="dn_note" placeholder="Private admin notes for this page…"></textarea>
+<label>Shelves</label>
+<input id="shelves" type="number" value="0"/>
+</div>
+<div class="field">
+<label>Bins per Shelf</label>
+<input id="bins" type="number" value="0"/>
+</div>
+<div class="field">
+<label>Positions per Bin</label>
+<input id="positions" type="number" value="0"/>
+</div>
 </div>
 <div class="actions">
-<button class="btn" id="dn_save" type="button">Save notes</button>
-<button class="smallbtn" data-close="devNoteModal" type="button">Close</button>
+<button id="buildBtn">Build Rack</button>
+<button id="downloadCustomerBtn">Download Customer CSV</button>
+<button id="downloadInternalBtn">Download Internal CSV</button>
+<label class="uploadBtn">
+        Upload CSV
+        <input accept=".csv" id="uploadCsvInput" type="file"/>
+</label>
+<button id="resetBtn">Reset</button>
 </div>
+<div class="status" id="status">Ready</div>
 </div>
+<!-- MAP -->
+<div class="panel">
+<h2>Rack Map</h2>
+<div id="map"></div>
 </div>
-<script src="assets/js/app.js"></script>
+<!-- LIST -->
+<div class="panel">
+<h2>Bin List</h2>
+<table>
+<thead>
+<tr>
+<th>Full Location</th>
+<th>Bin Code</th>
+<th>Part</th>
+<th>Description</th>
+<th>Min</th>
+<th>Max</th>
+</tr>
+</thead>
+<tbody id="list"></tbody>
+</table>
+</div>
+
 <script>
-    (function(){
-      try{
-        const raw = localStorage.getItem('bwproguide.settings');
-        const s = raw ? JSON.parse(raw) : {};
-        const v = s.version || 'v3';
-        const lu = s.lastUpdated || '';
-        document.querySelectorAll('[data-meta="version"]').forEach(el=>el.textContent=v);
-        document.querySelectorAll('[data-meta="lastUpdated"]').forEach(el=>el.textContent=lu || '—');
-      }catch(e){}
-    })();
-  </script>
+const alpha="ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("")
+let state=[],data={}
+
+function pad(n){return String(n).padStart(2,'0')}
+function clean(v){return (v||"").toUpperCase().replace(/[^A-Z0-9]/g,"")}
+function shelf(i){return alpha[i]}
+
+function build(){
+  const r=pad(document.getElementById("rack").value)
+  const s=document.getElementById("shelves").value
+  const b=document.getElementById("bins").value
+  const p=document.getElementById("positions").value
+
+  state=[]
+  for(let i=0;i<s;i++){
+    for(let j=0;j<b;j++){
+      state.push({r,i,j,p})
+    }
+  }
+  draw()
+}
+
+function code(x,pos=0){
+  return x.r + shelf(x.i) + pad(x.j+1) + alpha[pos]
+}
+
+function full(c){
+  return clean(customerName.value)+":"+clean(rackName.value)+":"+c
+}
+
+function draw(){
+  map.innerHTML=""
+  list.innerHTML=""
+
+  state.forEach(x=>{
+    let row=document.createElement("div")
+    row.className="cell"
+    row.innerHTML=code(x)
+    map.appendChild(row)
+
+    for(let i=0;i<x.p;i++){
+      let c=code(x,i)
+      let tr=document.createElement("tr")
+      tr.innerHTML=`
+        <td>${full(c)}</td>
+        <td>${c}</td>
+        <td><input></td>
+        <td><input></td>
+        <td><input></td>
+        <td><input></td>
+      `
+      list.appendChild(tr)
+    }
+  })
+}
+
+function csv(){
+  let rows=[["Full","Code","Part","Desc","Min","Max"]]
+  list.querySelectorAll("tr").forEach(r=>{
+    let i=r.querySelectorAll("input")
+    rows.push([r.children[0].innerText,r.children[1].innerText,i[0].value,i[1].value,i[2].value,i[3].value])
+  })
+  return rows.map(r=>r.join(",")).join("\n")
+}
+
+function download(name){
+  let blob=new Blob([csv()],{type:"text/csv"})
+  let a=document.createElement("a")
+  a.href=URL.createObjectURL(blob)
+  a.download=name
+  a.click()
+}
+
+function upload(file){
+  let reader=new FileReader()
+  reader.onload=()=>{
+    let rows=reader.result.split("\n").slice(1)
+    rows.forEach(r=>{
+      let cols=r.split(",")
+      data[cols[1]]={p:cols[2],d:cols[3],min:cols[4],max:cols[5]}
+    })
+    draw()
+  }
+  reader.readAsText(file)
+}
+
+buildBtn.onclick=build
+downloadCustomerBtn.onclick=()=>download("customer.csv")
+downloadInternalBtn.onclick=()=>download("internal.csv")
+uploadCsvInput.onchange=e=>upload(e.target.files[0])
+resetBtn.onclick=()=>{location.reload()}
+</script>
 </body>
 </html>
