@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<title>Angular Contact Ball Bearings</title>
+<link href="../assets/css/style.css" rel="stylesheet"/>
+<script src="https://unpkg.com/mammoth/mammoth.browser.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+</head>
+<body data-page="page">
+<div class="container">
+  <div id="bw-global-header"></div>
+  <div class="bw-page-actions" hidden="">
+    <a class="btn" href="../downloads/products/angular-contact-ball-bearings/Angular_Contact_Ball_Bearings_Poster_Phase_2.docx">⬇ Brief Download</a>
+    <a class="btn" href="../downloads/products/angular-contact-ball-bearings/Angular Contact Ball Bearings.xlsx">⬇ Detailed Download</a>
+  </div>
+
+  <section class="heroPanel">
+    <div class="heroIcon">📘</div>
+    <h1>Angular Contact Ball Bearings</h1>
+    <p class="subtitle productDetailIntro">New product page layout. Quick brief content and detailed reference content are shown together from the existing source files.</p>
+  </section>
+
+  <div class="productDetailGrid">
+    <section class="card briefCard dynamicContent" id="briefContent">
+      <h2>Brief guide</h2>
+      <p>Loading brief content…</p>
+    </section>
+    <section class="card briefCard dynamicContent" id="detailedContent">
+      <h2>Detailed reference</h2>
+      <p>Loading detailed content…</p>
+    </section>
+  </div>
+</div>
+
+<script src="../assets/js/app.js"></script>
+<script>
+(function(){
+  function escapeHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+  async function fetchArrayBuffer(path){
+    const res = await fetch(path, {cache:'no-store'});
+    if(!res.ok) throw new Error('Could not load ' + path);
+    return await res.arrayBuffer();
+  }
+  async function renderDocx(el, path){
+    try{
+      const buf = await fetchArrayBuffer(path);
+      const result = await window.mammoth.convertToHtml({arrayBuffer:buf});
+      el.innerHTML = '<h2>Brief guide</h2>' + (result.value || '<p>No brief content found.</p>');
+    }catch(err){
+      el.innerHTML = '<h2>Brief guide</h2><p><strong>Unable to load brief content.</strong> Use the Brief Download button above.</p>';
+      console.error(err);
+    }
+  }
+  async function renderXlsx(el, path){
+    try{
+      const buf = await fetchArrayBuffer(path);
+      const wb = window.XLSX.read(buf, {type:'array'});
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      const rows = window.XLSX.utils.sheet_to_json(ws, {header:1, raw:false});
+      let html = '<h2>Detailed reference</h2>';
+      rows.forEach(function(r){
+        const cell = (r && r.length) ? String(r[0] ?? '').trim() : '';
+        if(!cell) return;
+        if(/^\d+\./.test(cell) || cell.endsWith(':')) html += '<h3>' + escapeHtml(cell) + '</h3>';
+        else html += '<p>' + escapeHtml(cell) + '</p>';
+      });
+      el.innerHTML = html || '<h2>Detailed reference</h2><p>No detailed content found.</p>';
+    }catch(err){
+      el.innerHTML = '<h2>Detailed reference</h2><p><strong>Unable to load detailed content.</strong> Use the Detailed Download button above.</p>';
+      console.error(err);
+    }
+  }
+  document.addEventListener('DOMContentLoaded', function(){
+    renderDocx(document.getElementById('briefContent'), '../downloads/products/angular-contact-ball-bearings/Angular_Contact_Ball_Bearings_Poster_Phase_2.docx');
+    renderXlsx(document.getElementById('detailedContent'), '../downloads/products/angular-contact-ball-bearings/Angular Contact Ball Bearings.xlsx');
+  });
+})();
+</script>
+<script src="../assets/js/bw-header.js"></script>
+</body>
+</html>
